@@ -1,0 +1,5 @@
+base: configs/ablations/01_baseline_ast_sam.yaml
+# + focal loss only on top of baseline
+loss:
+  type: "focal"
+  gamma: 2.0

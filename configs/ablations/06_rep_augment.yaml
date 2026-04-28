@@ -1,0 +1,7 @@
+base: configs/ablations/05_metadata.yaml
+# + RepAugment + SpecAugment
+augmentation:
+  spec_augment:
+    enabled: true
+  rep_augment:
+    enabled: true

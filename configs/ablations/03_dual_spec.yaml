@@ -1,0 +1,17 @@
+base: configs/ablations/02_focal_loss.yaml
+# + dual-resolution spectrogram branches (shared weights)
+model:
+  ast:
+    shared_weights: true
+  gated_fusion:
+    num_views: 2
+spectrogram:
+  fine:
+    n_mels: 128
+    n_fft: 1024
+    hop_length: 64
+  coarse:
+    enabled: true
+    n_mels: 64
+    n_fft: 2048
+    hop_length: 256

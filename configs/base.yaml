@@ -1,0 +1,86 @@
+# ─────────────────────────────────────────────
+# base.yaml  –  shared defaults for all configs
+# ─────────────────────────────────────────────
+
+data:
+  raw_dir: "data/raw"
+  cycles_dir: "data/cycles"
+  metadata_csv: "data/metadata.csv"
+  # Official ICBHI 60/40 patient-level split
+  # Never change this — mixing patients inflates scores
+  split_ratio: 0.6       # train fraction (patient-level)
+  seed: 42 
+
+audio:
+  sample_rate: 22050
+  duration_seconds: 8
+  bandpass_low_hz: 50
+  bandpass_high_hz: 2000
+  bandpass_order: 4
+  silence_threshold_db: -40.0
+
+spectrogram:
+  fine:
+    n_mels: 128
+    n_fft: 1024
+    hop_length: 64        # ~3 ms — captures crackles (5–15 ms)
+    target_height: 128
+    target_width: 1024
+  coarse:
+    n_mels: 64
+    n_fft: 2048
+    hop_length: 256       # ~12 ms — captures wheezes (>80 ms)
+    target_height: 128
+    target_width: 1024
+
+classes:
+  names: ["normal", "crackle", "wheeze", "both"]
+  # Inverse-frequency class weights: N_total / (4 * N_class)
+  # Approximate from ICBHI 2017 counts: 3642, 1864, 886, 506
+  weights: [1.0, 1.9, 3.9, 7.2]
+
+augmentation:
+  spec_augment:
+    enabled: true
+    time_mask_max_ratio: 0.20
+    freq_mask_max_ratio: 0.20
+    num_time_masks: 2
+    num_freq_masks: 2
+  patch_mix:
+    enabled: true
+    prob: 0.5
+    min_mix_ratio: 0.20
+    max_mix_ratio: 0.40
+  rep_augment:
+    enabled: true
+    mask_rate: 0.20
+    gen_alpha: 0.4        # Beta(alpha, alpha) for latent interpolation
+
+training:
+  epochs: 50
+  batch_size: 32
+  num_workers: 4
+  early_stopping_patience: 10
+  early_stopping_metric: "sensitivity"   # maximize sensitivity
+  checkpoint_dir: "experiments/runs"
+  log_every_n_steps: 20
+
+optimizer:
+  type: "asam"            # asam | sam | adamw
+  base_lr: 5.0e-5
+  weight_decay: 0.01
+  asam_rho: 0.5
+  asam_eta: 0.01
+
+scheduler:
+  type: "cosine_warmup"
+  warmup_ratio: 0.05      # 5% of total steps as warmup
+
+loss:
+  type: "focal"
+  gamma: 2.0
+  # class weights from data.classes.weights above
+
+logging:
+  tensorboard: true
+  log_dir: "experiments/runs"

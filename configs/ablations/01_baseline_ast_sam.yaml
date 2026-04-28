@@ -1,0 +1,50 @@
+base: configs/base.yaml
+
+# Ablation 01: Reproduce the reference paper (AST + SAM + weighted sampler)
+# Disable all MVST-BTS+ additions — pure baseline
+
+model:
+  name: "MVSTBTSPlus"
+  ast:
+    pretrained_checkpoint: "MIT/ast-finetuned-audioset-10-10-0.4593"
+    shared_weights: true
+    patch_size: 16
+    hidden_size: 768
+    freeze_first_n_layers: 0
+  metadata_mlp:
+    enabled: false
+  gated_fusion:
+    input_dim: 768
+    num_views: 1               # single spectrogram branch
+  classifier:
+    hidden_dim: 768
+    dropout: 0.1
+    num_classes: 4
+
+spectrogram:
+  fine:
+    n_mels: 128
+    n_fft: 1024
+    hop_length: 512            # standard single-res setting
+    target_height: 128
+    target_width: 1024
+  coarse:
+    enabled: false
+
+augmentation:
+  spec_augment:
+    enabled: false
+  patch_mix:
+    enabled: false
+  rep_augment:
+    enabled: false
+
+loss:
+  type: "cross_entropy"
+  gamma: null
+
+optimizer:
+  type: "sam"
+  base_lr: 1.0e-4
+  weight_decay: 0.01
+  asam_rho: 0.05

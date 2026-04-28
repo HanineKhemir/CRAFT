@@ -1,0 +1,8 @@
+base: configs/ablations/04_gated_fusion.yaml
+# + metadata MLP fusion
+model:
+  metadata_mlp:
+    enabled: true
+    embedding_dim: 64
+    hidden_size: 256
+    output_dim: 768

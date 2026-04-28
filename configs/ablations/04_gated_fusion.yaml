@@ -1,0 +1,5 @@
+base: configs/ablations/03_dual_spec.yaml
+# + independent encoder weights + gated fusion
+model:
+  ast:
+    shared_weights: false

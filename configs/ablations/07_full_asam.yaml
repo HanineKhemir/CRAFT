@@ -1,0 +1,9 @@
+base: configs/ablations/06_rep_augment.yaml
+# Full MVST-BTS+ with ASAM + PatchMix — final model
+augmentation:
+  patch_mix:
+    enabled: true
+optimizer:
+  type: "asam"
+  base_lr: 5.0e-5
+  asam_rho: 0.5
